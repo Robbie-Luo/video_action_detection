@@ -8,7 +8,7 @@ import torch
 import torch.utils.data as data_utl
 
 from dataset import VidOR
-from utils import load_vidor_dataset
+from frames import load_vidor_dataset
 
 class VidorDataset(data_utl.Dataset):
 
