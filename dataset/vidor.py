@@ -34,7 +34,6 @@ class VidOR(DatasetV1):
             'hold_hand_of','shake_hand_with','wave_hand_to','speak_to','shout_at','feed',
             'open','close','use','cut','clean','drive','play(instrument)',
         ]
-        actions = ['away', 'behind']
         for action in actions:
             assert action in self.pred2pid
         return actions

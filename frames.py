@@ -32,6 +32,9 @@ def extract_frames(split):
         if not os.path.exists(frame_path):
             os.makedirs(frame_path, exist_ok=True)
             os.system(local_ffmpeg_path + ' -i ' + video_path + ' ' + frame_path + '/%4d.jpg > /dev/null 2>&1')
+        frames = sorted(glob.glob(frame_path+'/*.jpg'))
+        assert len(frames)>0
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
