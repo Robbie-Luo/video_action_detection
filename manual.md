@@ -19,3 +19,8 @@ ssh wluo@fs4.das4.science.uva.nl
 
 Connect to GCP 
 34.85.51.246 
+
+Train i3d
+nohup python train_i3d.py > i3d.out 2>&1 & 
+watch -n 0.5 nvidia-smi
+34198

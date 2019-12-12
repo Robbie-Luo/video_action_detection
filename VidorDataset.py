@@ -22,7 +22,7 @@ class VidorDataset(data_utl.Dataset):
         self.mode = mode
         self.low_memory = low_memory
         self.data = self.make_vidor_data()
-        self.max_length = 2
+        self.max_length = 20
         if split == 'training':
             self.transforms = transforms.Compose([videotransforms.RandomCrop(224),
                                            videotransforms.RandomHorizontalFlip()])
@@ -53,7 +53,6 @@ class VidorDataset(data_utl.Dataset):
     def load_frames(self, video_path, start, end):
         frame_path = video_path.replace('video','frame').replace('.mp4','')
         frames = sorted(glob.glob(frame_path+'/*.jpg'))
-        assert len(frames)>0
         if end - start > self.max_length:
             end = start +  self.max_length
         return np.asarray([self.frame_to_array(frame_path) for frame_path in frames[start:end]],dtype=np.float32)
