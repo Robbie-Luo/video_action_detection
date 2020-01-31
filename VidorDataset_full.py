@@ -57,8 +57,8 @@ class VidorDataset(data_utl.Dataset):
     
     def load_rgb_frames(self, frame_dir, start, num):
         # frames = sorted(glob.glob(frame_path+'/*.jpg'))
-        frames = []
-        for i in range(start, start+num):
+        def get_image(i):
+            img_path = os.path.join(frame_dir, str(i).zfill(4)+'.jpg')
             img = cv2.imread(os.path.join(frame_dir, str(i).zfill(4)+'.jpg'))[:, :, [2, 1, 0]]
             w,h,c = img.shape
             if w < 226 or h < 226:
@@ -66,7 +66,8 @@ class VidorDataset(data_utl.Dataset):
                 sc = 1+d/min(w,h)
                 img = cv2.resize(img,dsize=(0,0),fx=sc,fy=sc)
             img = (img/255.)*2 - 1
-            frames.append(img)
+            return img
+        frames = [get_image(i) for i in range(start, start+num)] 
         return np.asarray(frames, dtype=np.float32)
             
             
@@ -79,14 +80,21 @@ class VidorDataset(data_utl.Dataset):
         """
 
         frame_dir, label, nf = self.data[index]
-        start_f = random.randint(1,nf-65)
-        imgs = self.load_rgb_frames(frame_dir, start_f, 64)
-        label = label[:, start_f:start_f+64]
+
+        feature_path =  frame_dir.replace('frame','feature')
+        if os.path.exists(feature_path+'/i3d_040'+'.npy'):
+            return 0,0, feature_path , nf
+        if nf > 1000:
+            return 0,0, feature_path, nf
+
+        imgs = self.load_rgb_frames(frame_dir, 1, nf)
 
         imgs = self.transforms(imgs)
 
         frames_tensor  = torch.from_numpy(imgs.transpose([3, 0, 1, 2]))
-        return frames_tensor, torch.from_numpy(label)
+
+        
+        return frames_tensor, torch.from_numpy(label), feature_path, nf
 
     def __len__(self):
         return len(self.data)
